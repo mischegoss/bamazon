@@ -1,0 +1,47 @@
+CREATE DATABASE bamazon;
+USE bamazon;
+CREATE TABLE products (
+    item_id int NOT NULL AUTO_INCREMENT,
+    product_name varchar(50),
+    department_name varchar(50),
+    price float,
+    stock_quantity int,
+    PRIMARY KEY (item_id)
+   
+);
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Tights', 'Basics', 9.00, 0);
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Panties', 'Basics', 3.50, 11);
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('V-Neck Shirts', 'Basics', 13.50, 8);
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Undershirts', 'Basics', 11.50, 30);
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Crew Socks', 'Basics', 5.50, 0);
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Tube Socks', 'Basics', 3.00, 100);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Brief', 'Basics', 7.50, 2);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Boxers', 'Basics', 8.50, 10);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Knee Socks', 'Basics', 2.50, 13);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Sports Bras', 'Basics', 15.50, 10);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Pajama Bottoms', 'Basics', 22.50, 10);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Pajama Top', 'Basics', 15.50, 1);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Sock Liner', 'Basics', 1.00, 7);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ('Slipper Socks', 'Basics', 8.50, 1);
