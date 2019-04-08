@@ -69,23 +69,26 @@ function makeTable() {
   ]).then(function(answers){
 	  let promptid = answers.promptid;
 	  let quantity = answers.quantity;
-	  purchaseOrder(promptid, quantity);
+	  makeOrder(promptid, quantity);
   });
  };
 
- function purchaseOrder(promptid, quantity){
+ function makeOrder(promptid, quantity){
 
 	var queryStr = 'SELECT * FROM products WHERE ?';
 
 	connection.query(queryStr, {item_id: promptid}, function(err,res){
 		if(err){console.log(err)};
 		if(quantity <= res[0].stock_quantity){
-			var total = res[0].price * quantity;
+            var total = res[0].price * quantity;
+            var updatedStock = (res[0].stock_quantity - quantity);
+            var stockpromptid = promptid;
+            console.log(updatedStock, stockpromptid)
+           
 			console.log("Item " + promptid + " is in stock.");
-			console.log("Your total cost for " + quantity + " " +res[0].product_name + " is " + total + " Thank you!");
-
-			/* Need to add part to deduct from inventory */
-
+            console.log("Your total cost for " + quantity + " " +res[0].product_name + " is $" + total + " Thank you!");
+            confirmPrompt(updatedStock, stockpromptid)
+        
 			
 		} else{
 			console.log("Oh no, we are out of " + res[0].product_name + ".");
@@ -93,5 +96,9 @@ function makeTable() {
 		makeTable();
 	});
 };
+
+function confirmPrompt(updatedStock, stockpromptid) {
+    console.log(updatedStock, stockpromptid)
+}
 
 makeTable();
