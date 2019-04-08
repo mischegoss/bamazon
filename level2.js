@@ -1,137 +1,84 @@
-/* Require Node and MySQL  */
-var inquirer = require('inquirer');
-var mysql = require('mysql');
+/* THIS IS BROKEN! Here is where I got as of Sunday night  but I am still  working! 
+ * I submitted this to show I am still working but I am not done and will keep  pushing
+  * to GitHub until I get working code.
+  * This code includes patches from other code
+  * Sorry for the delay. */
+  
+var mysql = require("mysql");
+ var inquirer = require("inquirer");
+ var Table = require("cli-table");
+ 
+ var connection = mysql.createConnection({
+	 host:"localhost",
+	 port:3306,
+	 user:"root",
+	 password:"password",
+	 database:"bamazon"
+ });
+ 
+ connection.connect(function(err){
+	 if(err)throw err;
+	 console.log("connected as id" + connection.threadId);
+ });
+ 
+function displayProducts() {
+	 var query = "Select * FROM products";
+	 connection.query(query, function(err, res){
+		 if(err) throw err;
+		 var displayTable = new Table ({
+			 head: ["Item ID", "Product Name", "Catergory", "Price", "Quantity"],
+			 colWidths: [10,25,25,10,14]
+		 });
+		 for(var i = 0; i < res.length; i++){
+			 displayTable.push(
+				 [res[i].item_id,res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+				 );
+		 }
+		 console.log(displayTable.toString());
+		 purchasePrompt();
+	 });
+ }
+ 
+ function purchasePrompt(){
+	 inquirer.prompt([
+	 {
+		 name: "ID",
+		 type: "input",
+		 message:"Please enter Item ID you like to purhcase.",
+		 filter:Number
+	 },
+	 {
+		 name:"Quantity",
+		 type:"input",
+		 message:"How many items do you wish to purchase?",
+		 filter:Number
+	 },
+ 
+  ]).then(function(answers){
+	  var quantityNeeded = answers.Quantity;
+	  var IDrequested = answers.ID;
+	  purchaseOrder(IDrequested, quantityNeeded);
+  });
+ };
 
+ function purchaseOrder(ID, amtNeeded){
 
-var connection = mysql.createConnection({
-	host: 'localhost',
-	port: 3306,
+	var queryStr = 'SELECT * FROM products WHERE ?';
+	connection.query(queryStr, {item_id: ID}, function(err,res){
+		if(err){console.log(err)};
+		if(amtNeeded <= res[0].stock_quantity){
+			var totalCost = res[0].price * amtNeeded;
+			console.log("Good news your order is in stock!");
+			console.log("Your total cost for " + amtNeeded + " " +res[0].product_name + " is " + totalCost + " Thank you!");
 
-	// Your username
-	user: 'root',
-
-	// Your password
-	password: 'password',
-	database: 'bamazon'
-});
-
-function promptUserPurchase() {
-
-	inquirer.prompt([
-		{
-			type: 'input',
-			name: 'inputtedid',
-			message: 'What item would you like to purchase? Please enter the Item Number',
-        }
-        
-	]).then(function(input) {
-		
-		var item = input.inputtedid;
-        var quantity = input.quantity;
-        
-        console.log(item)
-
-		// Query db to confirm that the given item ID exists in the desired quantity
-		var queryStr = 'SELECT * FROM products WHERE ?';
-
-		connection.query(queryStr, {item_id: item}, function(err, response) {
-			if (err) throw err;
-
-			if (response.length === 0) {
-
-				connection.query('SELECT MAX(item_id) FROM products', function (err, results) {
-
-					if(err) {
-					console.error(err.stack);
-					return;
-					}
 			
-					if(results.length > 0) {
-						var myresult = results[0];
-						console.log(results)
-					}else
-					{
-						console.log('Crap, not');
-					}
-				})
-			}
-				
-				console.log('You selected ' + item + '. That is not a valid entry. Please try again. ');
 
-				displayInventory();
+			/*connection.query("UPDATE products SET stock_quantity = stock_quantity - " + amtNeeded + "WHERE item_id = " + ID);*/
+		} else{
+			console.log("Insufficient quantity, sorry we do not have enough " + res[0].product_name + "to complete your order.");
+		};
+		displayProducts();
+	});
+};
 
-
-			} else {
-				var productData = data[0];
-				if (quantity <= productData.stock_quantity) {
-					console.log('Congratulations, the product you requested is in stock! Placing order!');
-
-					// Construct the updating query string
-					var updateQueryStr = 'UPDATE products SET stock_quantity = ' + (productData.stock_quantity - quantity) + ' WHERE item_id = ' + item;
-					// console.log('updateQueryStr = ' + updateQueryStr);
-
-					// Update the inventory
-					connection.query(updateQueryStr, function(err, data) {
-						if (err) throw err;
-
-						console.log('Your order has been placed! Your total is $' + productData.price * quantity);
-						console.log('Thank you for shopping with us!');
-						console.log("\n---------------------------------------------------------------------\n");
-
-						// End the database connection
-						connection.end();
-					})
-				} else {
-					console.log('Sorry, there is not enough product in stock, your order can not be placed as is.');
-					console.log('Please modify your order.');
-					console.log("\n---------------------------------------------------------------------\n");
-
-					displayInventory();
-				}
-			}
-		})
-	})
-}
-
-function displayInventory() {
-	// console.log('___ENTER displayInventory___');
-
-	// Construct the db query string
-	queryStr = 'SELECT * FROM products';
-
-	// Make the db query
-	connection.query(queryStr, function(err, data) {
-		if (err) throw err;
-
-		console.log('Existing Inventory: ');
-		console.log('...................\n');
-
-		var strOut = '';
-		for (var i = 0; i < data.length; i++) {
-			strOut = '';
-			strOut += 'Item ID: ' + data[i].item_id + '  //  ';
-			strOut += 'Product Name: ' + data[i].product_name + '  //  ';
-			strOut += 'Department: ' + data[i].department_name + '  //  ';
-			strOut += 'Price: $' + data[i].price + ' // ';
-			strOut += 'Stock: ' + data[i].stock_quantity + '\n';
-
-			console.log(strOut);
-		}
-
-	  	console.log("---------------------------------------------------------------------\n");
-
-	  	//Prompt the user for item/quantity they would like to purchase
-	  	promptUserPurchase();
-	})
-}
-
-// runBamazon will execute the main application logic
-function runBamazon() {
-	// console.log('___ENTER runBamazon___');
-
-	// Display the available inventory
-	displayInventory();
-}
-
-// Run the application logic
-runBamazon();
+displayProducts();
