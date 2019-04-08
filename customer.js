@@ -98,6 +98,7 @@ function makeTable() {
 };
 
 function confirmPrompt(updatedStock, stockpromptid) {
+    var resetquery = 'UPDATE Products SET ? WHERE ?'
     console.log(updatedStock, stockpromptid)
 }
 
