@@ -24,7 +24,7 @@
 	 console.log("connected as id" + connection.threadId);
  });
 
-/* The first thing displayed  is a table of products */
+/* The first thing displayed is a table of products. I saw others had used CLI-Table so I tried it here. */
 
  
 function makeTable() {
@@ -32,8 +32,8 @@ function makeTable() {
 	 connection.query(queryfortable, function(error, results){
 		 if(error) throw error;
 		 var tableMaker = new Table ({
-			 head: ["Unique ID", "Product Name", "Department", "Price", "Quantity in Stock"],
-			 colWidths: [10,25,25,10,10]
+			 head: ["ID", "Product Name", "Department", "Price", "Quantity in Stock"],
+			 colWidths: [10,25,20,10,20]
 		 });
 		 for(var i = 0; i < results.length; i++){
 			 tableMaker.push(
