@@ -1,10 +1,19 @@
-
 /* Require Node and MySQL  */
 var inquirer = require('inquirer');
 var mysql = require('mysql');
-const connection = require('./connection');
 
 
+var connection = mysql.createConnection({
+	host: 'localhost',
+	port: 3306,
+
+	// Your username
+	user: 'root',
+
+	// Your password
+	password: 'password',
+	database: 'bamazon'
+});
 
 function promptUserPurchase() {
 
@@ -40,12 +49,12 @@ function promptUserPurchase() {
 					if(results.length > 0) {
 						var myresult = results[0];
 						console.log(results)
-					else
+					}else
 					{
 						console.log('Crap, not');
 					}
 				})
-			});
+			}
 				
 				console.log('You selected ' + item + '. That is not a valid entry. Please try again. ');
 
