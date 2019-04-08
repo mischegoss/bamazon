@@ -1,8 +1,8 @@
 /* THIS IS BROKEN! Here is where I got as of Sunday night  but I am still  working! 
  * I submitted this to show I am still working but I am not done and will keep  pushing
   * to GitHub until I get working code.
-  * This code includes patches from other code
-  * Sorry for the delay. */
+  * This code includes patches from other people's code as well!
+  * Sorry for the delay. I am trying to get it done!*/
   
 var mysql = require("mysql");
  var inquirer = require("inquirer");
@@ -23,15 +23,19 @@ var mysql = require("mysql");
  
 function displayProducts() {
 	 var query = "Select * FROM products";
-	 connection.query(query, function(err, res){
-		 if(err) throw err;
+	 connection.query(query, function(error, results){
+		 if(error) throw error;
 		 var displayTable = new Table ({
-			 head: ["Item ID", "Product Name", "Catergory", "Price", "Quantity"],
-			 colWidths: [10,25,25,10,14]
+			 head: ["Unique ID", "Product Name", "Department", "Price", "Quantity in Stock"],
+			 colWidths: [10,25,25,10,10]
 		 });
-		 for(var i = 0; i < res.length; i++){
+		 for(var i = 0; i < results.length; i++){
 			 displayTable.push(
-				 [res[i].item_id,res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+				 [results[i].item_id,
+				 results[i].product_name,
+				  results[i].department_name, 
+				  results[i].price,
+				  results[i].stock_quantity]
 				 );
 		 }
 		 console.log(displayTable.toString());
@@ -42,34 +46,34 @@ function displayProducts() {
  function purchasePrompt(){
 	 inquirer.prompt([
 	 {
-		 name: "ID",
+		 name: "promptid",
 		 type: "input",
-		 message:"Please enter Item ID you like to purhcase.",
+		 message:"Please enter Item ID you like to purchase.",
 		 filter:Number
 	 },
 	 {
-		 name:"Quantity",
+		 name:"quantity",
 		 type:"input",
 		 message:"How many items do you wish to purchase?",
 		 filter:Number
 	 },
  
   ]).then(function(answers){
-	  var quantityNeeded = answers.Quantity;
-	  var IDrequested = answers.ID;
-	  purchaseOrder(IDrequested, quantityNeeded);
+	  var resquantity = answers.quantity;
+	  var respromptid = answers.promptid;
+	  purchaseOrder(resquantity, respromptid);
   });
  };
 
- function purchaseOrder(ID, amtNeeded){
+ function purchaseOrder(promptid, quantity){
 
 	var queryStr = 'SELECT * FROM products WHERE ?';
-	connection.query(queryStr, {item_id: ID}, function(err,res){
+	connection.query(queryStr, {item_id: promptid}, function(err,res){
 		if(err){console.log(err)};
-		if(amtNeeded <= res[0].stock_quantity){
-			var totalCost = res[0].price * amtNeeded;
+		if(quantity <= res[0].stock_quantity){
+			var totalCost = res[0].price * quantity;
 			console.log("Good news your order is in stock!");
-			console.log("Your total cost for " + amtNeeded + " " +res[0].product_name + " is " + totalCost + " Thank you!");
+			console.log("Your total cost for " + quantity + " " +res[0].product_name + " is " + totalCost + " Thank you!");
 
 			
 
