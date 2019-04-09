@@ -1,8 +1,4 @@
-/* THIS IS BROKEN! Here is where I got as of Sunday night  but I am still  working! 
- * I submitted this to show I am still working but I am not done and will keep  pushing
-  * to GitHub until I get working code.
-  * This code includes patches from other people's code as well!
-  * Sorry for the delay. I am trying to get it done!*/
+/*Basic working done. Will work on other levels */
 
   /* Require dependencies */
 
@@ -49,7 +45,7 @@ function makeTable() {
 	 });
  }
 
- /* This uses Inquirer to ask questions.  It does not deduct from quantity yet */ 
+ /* This uses Inquirer to ask questions. */ 
  
  function customerPrompt(){
 	 inquirer.prompt([
@@ -58,11 +54,13 @@ function makeTable() {
 		 type: "input",
 		 message:"Please enter Item ID you like to purchase."
 		 
+		 
 	 },
 	 {
 		 name:"quantity",
 		 type:"input",
 		 message:"How many items do you wish to purchase?"
+		
 		 
 	 },
  
@@ -82,7 +80,7 @@ function makeTable() {
 		if(quantity <= res[0].stock_quantity){
             var total = res[0].price * quantity;
             var updatedStock = (res[0].stock_quantity - quantity);
-            var stockpromptid = promptid;
+            var stockpromptid = parseInt(promptid);
             console.log(updatedStock, stockpromptid)
            
 			console.log("Item " + promptid + " is in stock.");
@@ -98,8 +96,15 @@ function makeTable() {
 };
 
 function confirmPrompt(updatedStock, stockpromptid) {
-    var resetquery = 'UPDATE Products SET ? WHERE ?'
-    console.log(updatedStock, stockpromptid)
+
+	connection.query("UPDATE products SET ? WHERE ?", [
+		{stock_quantity: updatedStock},
+		{item_id: stockpromptid}
+		], function(err, res){
+			if(err) throw err;
+			
+		});
+	  
 }
 
 makeTable();
