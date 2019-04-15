@@ -1,4 +1,4 @@
-/* This  is still a work in progress. Three of the choices are working at the basic level */
+/* This  is still a work in progress. Two of the choices are working at the basic level. (I broke the Add Stock) */
 
 const inquirer = require('inquirer');
 const mysql = require('mysql');
@@ -27,7 +27,7 @@ function firstPrompt() {
         message: "Pick an option",
         choices: ["View Products For Sale", 
         "View Low Inventory", 
-        "Add To Inventory", 
+        "Add Stock", 
         "Add New Product"]
 
     }]).then(function(answers) {
@@ -41,11 +41,14 @@ function firstPrompt() {
                 case "View Low Inventory":
                   lowStock();
                   break;
-                  case "Add to Inventory":
-                  addStock();
+
+                case "Add Stock":
+                   addStock();
                   break;
-                  case "Add New Product":
-                  // code block
+
+                case "Add New Product":
+                  console.log('Add New Product');
+
                 default:
                   // code block
               }
@@ -57,7 +60,7 @@ function firstPrompt() {
                 connection.query(queryfortable, function(error, results){
                     if(error) throw error;
                     var tableMaker = new Table ({
-                        head: ["ID", "Product Name", "Department", "Price", "Quantity in Stock"],
+                        head: ["ID", "Product Name", "Department", "Price", "Stock"],
                         colWidths: [10,25,20,10,20]
                     });
                     for(var i = 0; i < results.length; i++){
@@ -79,7 +82,7 @@ function firstPrompt() {
                 connection.query(queryfortable, function(error, results){
                     if(error) throw error;
                     var tableMaker = new Table ({
-                        head: ["ID", "Product Name", "Department", "Price", "Quantity in Stock"],
+                        head: ["ID", "Product Name", "Department", "Price", "Stock"],
                         colWidths: [10,25,20,10,20]
                     });
                     for(var i = 0; i < results.length; i++){
@@ -102,7 +105,7 @@ function firstPrompt() {
             
                         type: "input",
                         name: "inputId",
-                        message: "Enter the ID that you want to add stock to.",
+                        message: "Enter the ID that you want to add stock to",
                     },
                     {
                         type: "input",
@@ -111,16 +114,10 @@ function firstPrompt() {
             
                     }
                 ]).then(function(addedstock) {
-            
-                          connection.query("UPDATE products SET ? WHERE ?", [{
-            
-                              stock_quantity: addedstock.inputNumber
-                          }, {
-                              item_id: addedstock.inputId
-                          }], function(err, res) {
-                          });
-                      firstPrompt();
-                    });
-                  }
+
+                  
+
+            })
+        }
 
 makeTable();
